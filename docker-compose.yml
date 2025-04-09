@@ -1,0 +1,29 @@
+services:
+  screwfast:
+    build:
+      context: ./screwfast
+      dockerfile: Dockerfile.screwfast
+    image: mydockeruser/screwfast:v1.0.0
+    expose:
+      - "80"
+
+  astropaper:
+    build:
+      context: ./astropaper
+      dockerfile: Dockerfile.astropaper
+    image: mydockeruser/astropaper:v2.3.1
+    expose:
+      - "80"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./screwfast/dist:/usr/share/nginx/html/screwFast:ro
+      - ./astropaper/dist:/usr/share/nginx/html/astroPaper:ro
+    depends_on:
+      - screwfast
+      - astropaper
